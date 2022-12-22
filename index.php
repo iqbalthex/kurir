@@ -4,7 +4,6 @@ require_once 'config.php';
 
 if(!isset($_SESSION['user_id'])){
   header('Location: login_page.php');
-  exit;
 }
 
 if(isset($_SESSION['msg'])){
@@ -24,6 +23,7 @@ if(isset($_POST['item'])){
 
   $conn->query("INSERT INTO items VALUES(
     '',
+    '$_SESSION[user_id]',
     '$item_name',
     '$lat',
     '$lng',
@@ -35,7 +35,11 @@ if(isset($_POST['item'])){
   }
 }
 
-$result = $conn->query("SELECT * FROM items");
+$result = $conn->query("SELECT items.id, name, lat, lng, arrival
+FROM items
+  INNER JOIN users ON (items.user_id = users.id)
+WHERE users.id = $_SESSION[user_id]");
+
 $items = [];
 while($item = $result->fetch_object()){
   $remain_time = $item->arrival - time();
@@ -67,17 +71,16 @@ while($item = $result->fetch_object()){
 <html>
 <head>
 	<title>Simple Map</title>
-	<meta name="viewport" content="initial-scale=1.0">
-	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1.0" />
+	<meta charset="utf-8" />
 
 	<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
-  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" /> -->
-	<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
+	<!-- <link rel="stylesheet" type="text/css" href="bootstrap.min.css" /> -->
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css" />
   
-
 	<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body class="d-grid text-center">
@@ -86,6 +89,11 @@ while($item = $result->fetch_object()){
   <h2>Aplikasi pengiriman barang</h2>
   <div>
     <ul class="d-flex align-items-center pt-2 pe-1">
+      <li>
+        <a type="button" class="btn" href="items_list.php">
+          Daftar barang
+        </a>
+      </li>
       <li>
         <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#addItem">
           Tambah barang
@@ -118,7 +126,7 @@ while($item = $result->fetch_object()){
                       echo '<span>Barang telah sampai</span>';
                     }
                     ?>
-                    <a class="btn btn-outline-danger" href="delete_item.php?id=<?= $item->id ?>" onclick="return confirm('Yakin ingin membatalkan?')"><b>Batalkan pengiriman</b></a>
+                    <a class="btn btn-outline-danger" href="delete_item.php?id=<?= $item->id ?>&redirect=index" onclick="return confirm('Yakin ingin membatalkan?')"><b>Batalkan pengiriman</b></a>
                   </p>
                 </a>
               </li>
@@ -170,6 +178,7 @@ while($item = $result->fetch_object()){
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form action="" method="post">
+        <input type="hidden" name="id" />
         <div class="modal-body">
           <div class="form-floating mb-2">
             <input type="text" class="form-control" id="item-name" name="item-name" placeholder="Nama barang" required />
@@ -203,8 +212,8 @@ while($item = $result->fetch_object()){
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiIKIfaFR_ubQUDVDzO5D-LwY_4biVMqc&callback=initMap&v=weekly" defer></script>
 
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script> -->
-<script type="text/javascript" src="bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+<!-- <script type="text/javascript" src="bootstrap.bundle.min.js"></script> -->
 
 <script src="index.js"></script>
 

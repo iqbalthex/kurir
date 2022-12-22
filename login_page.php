@@ -21,6 +21,7 @@ if(isset($_POST['login'])){
       alert('Password salah!');
     } else {
       $_SESSION['user_id'] = $user['id'];
+      $_SESSION['role'] = $user['role'];
       header('Location: index.php');
       exit;
     }
@@ -36,7 +37,7 @@ if(isset($_POST['login'])){
 	<meta charset="utf-8">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
-	<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+	<!-- <link rel="stylesheet" type="text/css" href="bootstrap.min.css" /> -->
 	<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body class="d-grid text-center">

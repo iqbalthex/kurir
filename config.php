@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-define('HOST', 'localhost');//'sql306.epizy.com');
-define('USER', 'root');//'epiz_33232406');
-define('PASS', '');//'c6H11p6gRaagO0w');
-define('DB_NAME', 'apk_kurir');//'epiz_33232406_cari_kost');
+define('HOST', 'localhost');
+define('USER', 'root');
+define('PASS', '');
+define('DB_NAME', 'apk_kurir');
 
 define('DAY_IN_SEC', 86400);
 define('HOUR_IN_SEC', 3600);
@@ -21,16 +21,20 @@ $conn->query("USE " . DB_NAME);
 
 $conn->query("CREATE TABLE IF NOT EXISTS items(
   id INT(6) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  user_id int(6),
   name VARCHAR(150) NOT NULL,
   lat VARCHAR(30) NOT NULL,
   lng VARCHAR(30) NOT NULL,
   arrival INT(11) NOT NULL
 )");
 
+$conn->query("ALTER TABLE items ADD FOREIGN KEY (user_id) REFERENCES users(id)");
+
 $conn->query("CREATE TABLE IF NOT EXISTS users(
   id INT(6) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   username VARCHAR(100) NOT NULL,
-  password VARCHAR(100) NOT NULL
+  password VARCHAR(100) NOT NULL,
+  role VARCHAR(20) NOT NULL
 )");
 
 $conn = new mysqli(HOST, USER, PASS, DB_NAME);

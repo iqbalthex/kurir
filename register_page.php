@@ -8,13 +8,16 @@ if(isset($_SESSION['user_id'])){
 if(isset($_POST['register'])){
   $username = htmlentities($_POST['username']);
   $password = htmlentities($_POST['password']);
+  $role = htmlentities($_POST['role']);
   $username = mysqli_real_escape_string($conn, $username);
   $password = mysqli_real_escape_string($conn, $password);
+  $role = mysqli_real_escape_string($conn, $role);
 
   $conn->query("INSERT INTO users VALUES(
     '',
     '$username',
-    '$password'
+    '$password',
+    '$role'
   )");
   if($conn->affected_rows > 0){
     alert('Data berhasil ditambahkan!');
@@ -30,7 +33,7 @@ if(isset($_POST['register'])){
 	<meta charset="utf-8">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
-	<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+	<!--link rel="stylesheet" type="text/css" href="bootstrap.min.css" /-->
 	<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body class="d-grid text-center">
@@ -46,9 +49,16 @@ if(isset($_POST['register'])){
         <input type="text" class="form-control" id="username" name="username" placeholder="Nama" required />
         <label for="username">Nama</label>
       </div>
-      <div class="form-floating">
+      <div class="form-floating mb-2">
         <input type="password" class="form-control" id="password" name="password" placeholder="Password" required />
         <label for="password">Password</label>
+      </div>
+      <div>
+        <label class="form-label">Daftar sebagai:</label>
+        <select class="form-select" name="role">
+          <option value="admin">Admin</option>
+          <option value="kurir">Kurir</option>
+        </select>
       </div>
       <button type="submit" name="register" class="btn btn-primary my-2">Daftar</button>
       <p>Sudah memiliki akun? <a href="login_page.php"><b>Login <i class="bi bi-box-arrow-in-right"></i></b></a></p>
